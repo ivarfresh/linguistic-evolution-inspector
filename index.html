@@ -51,7 +51,7 @@ function render(){if(!cur||!curRun)return;const r=curRun;
  r.rounds.forEach(rd=>rd.dyads.forEach((d,di)=>{h+=`<tr><td>${di?'':rd.round}</td><td class="l">${esc(d.inv)}→${esc(d.tru)}</td><td>${num(d.sent)}</td><td class="noise">${num(d.sent_c)}</td><td>${num(d.recv)}</td><td>${num(d.ret)}</td><td class="noise">${num(d.ret_c)}</td><td class="l">${di?'':esc(Object.entries(rd.balances).map(([k,v])=>k.replace('Agent_','A')+':'+v).join('  '))}</td></tr>`;}));
  h+=`</table>`;
  h+=`<h2>Transcript &nbsp;<select id="mode" onchange="mode=this.value;render()">
-   <option value="transcript">reasoning + myths</option>
+   <option value="transcript">game + myth outputs</option>
    <option value="prompts">+ input prompt each round</option>
    <option value="context">full model context (system + messages)</option></select></h2>`;
  view.innerHTML=h;document.getElementById('mode').value=mode;
@@ -68,9 +68,11 @@ function render(){if(!cur||!curRun)return;const r=curRun;
      if(pr.length)pr.forEach(p=>s+=`<div class="prompt"><b>input prompt → ${esc(p.agent)} (${esc(p.task)}, ${esc(p.role)}):</b> ${esc(p.prompt)}</div>`);
      else s+=`<div class="hint">no interaction_history for this round</div>`;}
    const ags=new Set([...Object.keys(rd.reasoning||{}),...Object.keys(rd.myths||{})]);
+   const mythFirst=(r.task_order||[])[0]==='myth'; // block order mirrors the run's task order
    ags.forEach(a=>{s+=`<div class="ag"><div class="who">${esc(a)}</div>`;
-     if(rd.reasoning[a])s+=`<div class="reason"><b>game:</b> ${esc(rd.reasoning[a])}</div>`;
-     if(rd.myths[a])s+=`<div class="myth"><b>myth:</b> ${esc(rd.myths[a])}</div>`;s+=`</div>`;});
+     const game=rd.reasoning[a]?`<div class="reason"><b>game:</b> ${esc(rd.reasoning[a])}</div>`:'';
+     const myth=rd.myths[a]?`<div class="myth"><b>myth:</b> ${esc(rd.myths[a])}</div>`:'';
+     s+=mythFirst?myth+game:game+myth;s+=`</div>`;});
    body.innerHTML+=s+`</div>`;});
  }
  view.appendChild(body);
