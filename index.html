@@ -79,22 +79,4 @@ function render(){if(!cur||!curRun)return;const r=curRun;
 }
 function showPlots(){document.querySelectorAll('.run').forEach(x=>x.classList.remove('sel'));cur=null;curRun=null;
  view.innerHTML='<h2>Aggregate plots</h2><div class="plt">'+D.plots.map(p=>`<h3>${esc(p.name)}</h3><img loading="lazy" src="${p.src}"/>`).join('')+'</div>';}
-// --- negative noise + defectors tab (Aron's crossmodel campaign, 2026-08-25) ---
-const NN={
- models:[
-  {id:'_all',label:'All models — comparison',plots:[{name:'Mean send by model and defection level (game-only)',src:'negnoise_plots/_all/overview.png'}]},
-  {id:'claude-sonnet-4.5',label:'Claude Sonnet 4.5',plots:[{name:'Dyad (2 agents)',src:'negnoise_plots/claude-sonnet-4.5/dyad.png'},{name:'Population (8 agents)',src:'negnoise_plots/claude-sonnet-4.5/pop8.png'}]},
-  {id:'gemini-3.7-flash',label:'Gemini 3.7 Flash',plots:[{name:'Dyad (2 agents)',src:'negnoise_plots/gemini-3.7-flash/dyad.png'},{name:'Population (8 agents)',src:'negnoise_plots/gemini-3.7-flash/pop8.png'}]},
-  {id:'gpt-5-nano',label:'GPT-5 Nano',plots:[{name:'Dyad (2 agents)',src:'negnoise_plots/gpt-5-nano/dyad.png'},{name:'Population (8 agents)',src:'negnoise_plots/gpt-5-nano/pop8.png'}]}]};
-let nnSel='_all';
-function showNegNoise(){document.querySelectorAll('.run').forEach(x=>x.classList.remove('sel'));cur=null;curRun=null;
- let h='<h2>Negative noise + defectors</h2>';
- h+='<p class="meta">Crossmodel campaign (2026-08-25): every transfer loses a uniform-random $0–1 (negative-only noise, agents informed), 10 rounds, 5 runs per cell. '+
-   'Defection variants: dyads use random defection (each game decision defects with 25%/50% probability); populations use fixed defector agents (25% = 2 of 8, 50% = 4 of 8). '+
-   'Top rows show mean sent per round (±SEM across runs, $5 max); bottom rows show the pooled return proportion (returned ÷ received, ⅓ = break-even for the investor).</p>';
- h+='<div>Model: <select id="nnmodel" onchange="nnSel=this.value;showNegNoise()">'+
-   NN.models.map(m=>`<option value="${m.id}"${m.id===nnSel?' selected':''}>${esc(m.label)}</option>`).join('')+'</select></div>';
- const m=NN.models.find(x=>x.id===nnSel)||NN.models[0];
- h+='<div class="plt">'+m.plots.map(p=>`<h3>${esc(p.name)}</h3><img loading="lazy" src="${p.src}"/>`).join('')+'</div>';
- view.innerHTML=h;}
 </script></body></html>
